@@ -482,7 +482,16 @@ const activities = [
     date: "24 Diciembre 2025",
     url: "navidad_2025.html",
   },
-  
+  {
+    id: 51,
+    title: "Bienvenido 2026",
+    image: "public/NUEVO2026.png",
+    status: "PRÓXIMAMENTE",
+    description:
+      "El Año Nuevo 2026 se celebrará el jueves 1 de enero. La festividad comienza en la víspera, la Nochevieja del 31...",
+    date: "31 Diciembre 2025",
+    url: "bienvenido_2026.html",
+  },
 
 ]
 
