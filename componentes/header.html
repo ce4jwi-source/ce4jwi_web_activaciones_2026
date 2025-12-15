@@ -1,0 +1,47 @@
+<!-- Header -->
+<header class="header">
+  <div class="header-content">
+    <a href="https://qsl.net/ce4jwi/index.html" class="logo">
+      <img src="public/favicon-32x32.png" alt="logo">
+      <span>CE4JWI</span>
+    </a>
+    
+    <!-- Botón hamburguesa para móviles -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <nav class="nav" id="mainNav">
+      <a href="index.html" class="nav-link" data-page="index">ACTIVIDADES</a>
+      <a href="calendario.html" class="nav-link" data-page="calendario">CALENDARIO</a>
+      <a href="QSO_logger.html" class="nav-link" data-page="qso_logger">QSO LOGGER</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Script inline para el menú móvil -->
+<script>
+(function() {
+  const menuToggle = document.getElementById('menuToggle');
+  const mainNav = document.getElementById('mainNav');
+  
+  if (menuToggle && mainNav) {
+    menuToggle.addEventListener('click', function() {
+      const isOpen = mainNav.classList.toggle('nav-open');
+      menuToggle.classList.toggle('active');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+    
+    // Cerrar menú al hacer clic en un enlace
+    mainNav.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('nav-open');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+})();
+</script>

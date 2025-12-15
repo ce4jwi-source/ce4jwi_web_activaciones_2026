@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- ============================================== -->
+  <!-- CAMBIAR: Título de la página -->
+  <!-- ============================================== -->
+  <title>QSO LOGGER</title>
+  
+  <!-- ============================================== -->
+  <!-- CAMBIAR: Descripción para SEO -->
+  <!-- ============================================== -->
+  <meta name="description" content="Registro de contactos QSO para radioaficionados">
+  
+  <link rel="stylesheet" href="recursos/styles.css">
+  <link rel="stylesheet" href="recursos/header-responsive.css">
+  <link rel="stylesheet" href="recursos/slider.css">
+  <link rel="stylesheet" href="recursos/qsologger.css">
+  <link rel="icon" href="public/favicon-32x32.png">
+</head>
+<body>
+  <!-- NO TOCAR: Header cargado automáticamente -->
+  <div id="header-container"></div>
+  
+  <!-- NO TOCAR: Marquesina cargada automáticamente -->
+  <div id="marquee-container"></div>
+
+  <!-- ========== CONTENIDO PRINCIPAL ========== -->
+  <main class="main-container">
+    <div class="content">
+      
+      <!-- ============================================== -->
+      <!-- CAMBIAR: Banner/Título principal de la página -->
+      <!-- ============================================== -->
+      <div class="banner">
+        <h1>🎧🎙️ QSO Logger</h1>
+      </div>
+
+      <!-- ╔════════════════════════════════════════════════════════════╗ -->
+      <!-- ║                                                            ║ -->
+      <!-- ║   ★★★ CONTENIDO PRINCIPAL - AGREGAR AQUÍ ★★★              ║ -->
+      <!-- ║                                                            ║ -->
+      <!-- ╚════════════════════════════════════════════════════════════╝ -->
+      
+      <section class="page-content">
+        
+    <div class="container">
+    <h1> <span>Registro de Contactos</span></h1>
+    <p>Registra y gestiona tus contactos de radioaficionados de manera sencilla y eficiente para generar su archivo Adif y posteriormente subirlo a las plataformas que desees.</p>
+    <br>
+    
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Fecha/Hora (UTC) <span class="utc-indicator">🕐 UTC</span></label>
+          <div class="datetime-group">
+            <input type="datetime-local" id="qsoDateTime">
+            <div class="checkbox-wrapper" title="Sincronizar con hora UTC actual">
+              <input type="checkbox" id="syncUtc" checked>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>SD del Operador</label>
+          <input type="text" id="myCallsign" placeholder="Tu indicativo" style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>SD del Colega</label>
+          <input type="text" id="theirCallsign" placeholder="Indicativo contacto" style="text-transform: uppercase;">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Frecuencia (MHz)</label>
+          <input type="text" id="frequency" placeholder="7.074">
+        </div>
+        <div class="form-group">
+          <label>Banda</label>
+          <select id="band">
+            <option value="">(seleccionar)</option>
+            <option value="80m">80m</option>
+            <option value="40m">40m</option>
+            <option value="30m">30m</option>
+            <option value="20m">20m</option>
+            <option value="17m">17m</option>
+            <option value="15m">15m</option>
+            <option value="12m">12m</option>
+            <option value="10m">10m</option>
+            <option value="6m">6m</option>
+            <option value="2m">2m</option>
+            <option value="70cm">70cm</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Modo</label>
+          <select id="mode">
+            <option value="">(seleccionar)</option>
+            <option value="SSB">SSB</option>
+            <option value="CW">CW</option>
+            <option value="FM">FM</option>
+            <option value="LSB">LSB</option>
+            <option value="DV">DV</option>
+            <option value="DMR">DMR</option>
+            <option value="VOI">VOI</option>
+            <option value="SSTV">SSTV</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>RST Enviado</label>
+          <input type="text" id="rstSent" placeholder="59" value="59">
+        </div>
+        <div class="form-group">
+          <label>RST Recibido</label>
+          <input type="text" id="rstRcvd" placeholder="59" value="59">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label>Comentarios</label>
+          <textarea id="comments" placeholder="Comentarios del QSO"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addQso()">Agregar QSO</button>
+        <button class="btn btn-secondary" onclick="clearForm()">Limpiar formulario</button>
+        <span class="sync-status" id="syncStatus">Sincronizado (0 QSOs)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-header">
+        <h2>QSOs cargados: <span id="qsoCount">0</span></h2>
+        <div class="table-actions">
+          <button class="btn btn-success" onclick="downloadAdif()">Descargar ADIF</button>
+          <button class="btn btn-danger" onclick="clearAllQsos()">Borrar QSO Cargados</button>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="qso-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha/Hora</th>
+              <th>SD Operador</th>
+              <th>SD Corresponsal</th>
+              <th>Modo</th>
+              <th>Banda</th>
+              <th>Freq</th>
+              <th>RST S/R</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="qsoTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <p>No hay QSOs registrados aún</p>
+        <p style="font-size: 12px;">Agrega tu primer contacto usando el formulario</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let qsos = JSON.parse(localStorage.getItem('qsos')) || [];
+    let utcInterval;
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      renderQsos();
+      updateUtcTime();
+      startUtcSync();
+      
+      // Cargar indicativo guardado
+      const savedCallsign = localStorage.getItem('myCallsign');
+      if (savedCallsign) {
+        document.getElementById('myCallsign').value = savedCallsign;
+      }
+    });
+
+    // Sincronización UTC
+    function updateUtcTime() {
+      if (document.getElementById('syncUtc').checked) {
+        const now = new Date();
+        const utcString = now.toISOString().slice(0, 16);
+        document.getElementById('qsoDateTime').value = utcString;
+      }
+    }
+
+    function startUtcSync() {
+      utcInterval = setInterval(updateUtcTime, 1000);
+    }
+
+    document.getElementById('syncUtc').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        updateUtcTime();
+      }
+    });
+
+    // Auto-detectar banda por frecuencia
+    document.getElementById('frequency').addEventListener('input', (e) => {
+      const freq = parseFloat(e.target.value);
+      let band = '';
+      
+      if (freq >= 1.8 && freq <= 2) band = '160m';
+      else if (freq >= 3.5 && freq <= 4) band = '80m';
+      else if (freq >= 7 && freq <= 7.3) band = '40m';
+      else if (freq >= 10.1 && freq <= 10.15) band = '30m';
+      else if (freq >= 14 && freq <= 14.35) band = '20m';
+      else if (freq >= 18.068 && freq <= 18.168) band = '17m';
+      else if (freq >= 21 && freq <= 21.45) band = '15m';
+      else if (freq >= 24.89 && freq <= 24.99) band = '12m';
+      else if (freq >= 28 && freq <= 29.7) band = '10m';
+      else if (freq >= 50 && freq <= 54) band = '6m';
+      else if (freq >= 144 && freq <= 148) band = '2m';
+      else if (freq >= 430 && freq <= 440) band = '70cm';
+      
+      if (band) {
+        document.getElementById('band').value = band;
+      }
+    });
+
+    // Agregar QSO
+    function addQso() {
+      const qso = {
+        id: Date.now(),
+        dateTime: document.getElementById('qsoDateTime').value,
+        myCallsign: document.getElementById('myCallsign').value.toUpperCase(),
+        theirCallsign: document.getElementById('theirCallsign').value.toUpperCase(),
+        frequency: document.getElementById('frequency').value,
+        band: document.getElementById('band').value,
+        mode: document.getElementById('mode').value,
+        rstSent: document.getElementById('rstSent').value,
+        rstRcvd: document.getElementById('rstRcvd').value,
+        comments: document.getElementById('comments').value
+      };
+
+      if (!qso.myCallsign || !qso.theirCallsign) {
+        alert('Por favor ingresa ambos indicativos');
+        return;
+      }
+
+      qsos.push(qso);
+      saveQsos();
+      renderQsos();
+      
+      // Guardar indicativo del operador
+      localStorage.setItem('myCallsign', qso.myCallsign);
+      
+      // Limpiar solo el indicativo del contacto y comentarios
+      document.getElementById('theirCallsign').value = '';
+      document.getElementById('comments').value = '';
+      document.getElementById('theirCallsign').focus();
+    }
+
+    // Renderizar tabla
+    function renderQsos() {
+      const tbody = document.getElementById('qsoTableBody');
+      const emptyState = document.getElementById('emptyState');
+      
+      document.getElementById('qsoCount').textContent = qsos.length;
+      document.getElementById('syncStatus').textContent = `Sincronizado (${qsos.length} QSOs)`;
+      
+      if (qsos.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      tbody.innerHTML = qsos.map((qso, index) => {
+        const dt = new Date(qso.dateTime);
+        const dateStr = dt.toLocaleDateString('es-ES') + ' ' + dt.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+        
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${dateStr}</td>
+            <td><strong>${qso.myCallsign}</strong></td>
+            <td><strong>${qso.theirCallsign}</strong></td>
+            <td>${qso.mode}</td>
+            <td>${qso.band}</td>
+            <td>${qso.frequency}</td>
+            <td>${qso.rstSent}/${qso.rstRcvd}</td>
+            <td class="actions-cell">
+              <button class="btn btn-secondary btn-small" onclick="deleteQso(${qso.id})">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Eliminar QSO
+    function deleteQso(id) {
+      if (confirm('¿Eliminar este QSO?')) {
+        qsos = qsos.filter(q => q.id !== id);
+        saveQsos();
+        renderQsos();
+      }
+    }
+
+    // Limpiar formulario
+    function clearForm() {
+      document.getElementById('theirCallsign').value = '';
+      document.getElementById('frequency').value = '';
+      document.getElementById('band').value = '';
+      document.getElementById('mode').value = '';
+      document.getElementById('rstSent').value = '59';
+      document.getElementById('rstRcvd').value = '59';
+      document.getElementById('comments').value = '';
+    }
+
+    // Limpiar todos los QSOs
+    function clearAllQsos() {
+      if (qsos.length === 0) return;
+      if (confirm(`¿Eliminar los ${qsos.length} QSOs cargados?`)) {
+        qsos = [];
+        saveQsos();
+        renderQsos();
+      }
+    }
+
+    // Guardar en localStorage
+    function saveQsos() {
+      localStorage.setItem('qsos', JSON.stringify(qsos));
+    }
+
+    // Generar y descargar ADIF
+    function downloadAdif() {
+      if (qsos.length === 0) {
+        alert('No hay QSOs para exportar');
+        return;
+      }
+
+      let adif = 'ADIF Export from QSO Logger\n';
+      adif += '<ADIF_VER:5>3.1.0\n';
+      adif += '<PROGRAMID:10>QSO Logger\n';
+      adif += '<PROGRAMVERSION:3>1.0\n';
+      adif += '<EOH>\n\n';
+
+      qsos.forEach(qso => {
+        // El formato de datetime-local es: "YYYY-MM-DDTHH:MM"
+        const dateTimeParts = qso.dateTime.split('T');
+        const date = dateTimeParts[0].replace(/-/g, ''); // YYYYMMDD
+        const time = dateTimeParts[1].replace(':', '');   // HHMM
+
+        adif += `<QSO_DATE:8>${date}`;
+        adif += `<TIME_ON:4>${time}`;
+        adif += `<STATION_CALLSIGN:${qso.myCallsign.length}>${qso.myCallsign}`;
+        adif += `<CALL:${qso.theirCallsign.length}>${qso.theirCallsign}`;
+        
+        if (qso.frequency) {
+          adif += `<FREQ:${qso.frequency.length}>${qso.frequency}`;
+        }
+        if (qso.band) {
+          adif += `<BAND:${qso.band.length}>${qso.band}`;
+        }
+        if (qso.mode) {
+          adif += `<MODE:${qso.mode.length}>${qso.mode}`;
+        }
+        if (qso.rstSent) {
+          adif += `<RST_SENT:${qso.rstSent.length}>${qso.rstSent}`;
+        }
+        if (qso.rstRcvd) {
+          adif += `<RST_RCVD:${qso.rstRcvd.length}>${qso.rstRcvd}`;
+        }
+        if (qso.comments) {
+          adif += `<COMMENT:${qso.comments.length}>${qso.comments}`;
+        }
+        
+        adif += '<EOR>\n';
+      });
+
+      // Descargar archivo
+      const blob = new Blob([adif], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qso_log_${new Date().toISOString().slice(0, 10)}.adi`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+
+        
+      </section>
+      
+      <!-- ╔════════════════════════════════════════════════════════════╗ -->
+      <!-- ║              FIN DEL CONTENIDO PRINCIPAL                   ║ -->
+      <!-- ╚════════════════════════════════════════════════════════════╝ -->
+
+    </div>
+
+    <!-- NO TOCAR: Sidebar cargado automáticamente (incluye slider) -->
+    <div id="sidebar-container"></div>
+  </main>
+
+  <!-- NO TOCAR: Footer cargado automáticamente -->
+  <div id="footer-container"></div>
+
+  <!-- Script que carga todos los componentes -->
+  <script src="recursos/componentes.js"></script>
+</body>
+</html>

@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrandMeister TG 73040 - Monitor en Tiempo Real</title>
+  
+  <!-- Socket.IO Client -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .widget {
+      width: 100%;
+      max-width: 700px;
+      background: linear-gradient(to bottom, #0f172a, #020617);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(to right, #dc2626, #ef4444, #f97316);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle fill='%23fff' fill-opacity='0.05' cx='20' cy='20' r='2'/%3E%3C/svg%3E");
+      opacity: 0.3;
+    }
+
+    .header-content {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .radio-icon {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 50%;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .radio-icon svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+
+    .header-title h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.025em;
+    }
+
+    .header-title p {
+      font-size: 0.75rem;
+      color: #fee2e2;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge-live {
+      background: #10b981;
+      color: white;
+    }
+
+    .badge-offline {
+      background: #64748b;
+      color: white;
+    }
+
+    .pulse-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+    }
+
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: white;
+      border-radius: 50%;
+      animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .pulse-dot::after {
+      content: '';
+      position: relative;
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      position: relative;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stats-left {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 8px 14px;
+    }
+
+    .stat-badge svg {
+      width: 16px;
+      height: 16px;
+      color: #fecaca;
+    }
+
+    .stat-badge .count {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .stat-badge .label {
+      font-size: 0.75rem;
+      color: #fecaca;
+    }
+
+    .stat-badge.active {
+      background: rgba(16, 185, 129, 0.3);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .stat-badge.active svg {
+      color: #6ee7b7;
+      animation: pulse 2s infinite;
+    }
+
+    .stat-badge.active .count {
+      color: #d1fae5;
+    }
+
+    .stat-badge.active .label {
+      color: #a7f3d0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .btn-ghost svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Table Header */
+    .table-header {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(30, 41, 59, 0.8);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #334155;
+    }
+
+    .table-header span:nth-child(3),
+    .table-header span:nth-child(4) {
+      text-align: center;
+    }
+
+    .table-header span:nth-child(5) {
+      text-align: right;
+    }
+
+    /* Sessions List */
+    .sessions-list {
+      max-height: 450px;
+      overflow-y: auto;
+    }
+
+    .sessions-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sessions-list::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    .sessions-list::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 3px;
+    }
+
+    .session-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr;
+      gap: 8px;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .session-row:hover {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .session-row.recent {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .session-row.new {
+      background: rgba(239, 68, 68, 0.3);
+      animation: flash 0.5s ease;
+    }
+
+    @keyframes flash {
+      0%, 100% { background: rgba(239, 68, 68, 0.3); }
+      50% { background: rgba(239, 68, 68, 0.5); }
+    }
+
+    /* Callsign Cell */
+    .callsign-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-indicator {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
+    }
+
+    .live-indicator::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #10b981;
+      border-radius: 50%;
+      animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .live-indicator::after {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+
+    .callsign-link {
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .callsign-link.recent {
+      color: #34d399;
+    }
+
+    .callsign-link.normal {
+      color: #38bdf8;
+    }
+
+    .callsign-link:hover {
+      text-decoration: underline;
+    }
+
+    .callsign-link svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .callsign-link:hover svg {
+      opacity: 1;
+    }
+
+    /* Name Cell */
+    .name-cell {
+      color: #cbd5e1;
+      align-self: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* DMR ID Cell */
+    .dmr-id-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      text-align: center;
+      align-self: center;
+    }
+
+    /* Time Cell */
+    .time-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .time-cell .time {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .time-cell .time.recent {
+      color: #34d399;
+    }
+
+    .time-cell .time.normal {
+      color: #94a3b8;
+    }
+
+    .time-cell .ago {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    /* Duration Cell */
+    .duration-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .duration-cell svg {
+      width: 12px;
+      height: 12px;
+      color: #64748b;
+    }
+
+    .duration-cell span {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.875rem;
+    }
+
+    .duration-cell span.has-duration {
+      color: #fbbf24;
+    }
+
+    .duration-cell span.no-duration {
+      color: #64748b;
+    }
+
+    /* Empty/Loading States */
+    .state-container {
+      padding: 48px 20px;
+      text-align: center;
+    }
+
+    .state-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    .state-icon.loading::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 4px solid rgba(239, 68, 68, 0.2);
+      border-radius: 50%;
+    }
+
+    .state-icon.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 4px solid transparent;
+      border-top-color: #ef4444;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .state-icon svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      color: #ef4444;
+    }
+
+    .state-icon.empty {
+      background: #1e293b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .state-icon.empty svg {
+      position: static;
+      transform: none;
+      color: #64748b;
+    }
+
+    .state-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .state-subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .state-connected {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 0.875rem;
+      color: #34d399;
+    }
+
+    .state-connected svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 12px 16px;
+      background: #0f172a;
+      border-top: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .footer-left svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .footer-left svg.connected {
+      color: #10b981;
+    }
+
+    .footer-left svg.disconnected {
+      color: #64748b;
+    }
+
+    .footer-link {
+      font-size: 0.75rem;
+      color: #f87171;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: #fca5a5;
+    }
+
+    .footer-link svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .table-header,
+      .session-row {
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        font-size: 0.75rem;
+      }
+
+      .table-header span:nth-child(2),
+      .session-row .name-cell {
+        display: none;
+      }
+
+      .header-title h2 {
+        font-size: 1.25rem;
+      }
+
+      .stats-left {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="widget" id="widget">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <div class="radio-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/>
+              <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/>
+              <circle cx="12" cy="12" r="2"/>
+              <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/>
+              <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>
+            </svg>
+          </div>
+          <div class="header-title">
+            <h2>TG 73040</h2>
+            <p>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              BrandMeister DMR Network
+            </p>
+          </div>
+        </div>
+        <div id="status-badge" class="badge badge-offline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" x2="23" y1="1" y2="23"/>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <line x1="12" x2="12.01" y1="20" y2="20"/>
+          </svg>
+          CONECTANDO
+        </div>
+      </div>
+
+      <!-- Stats Bar - CHANGE: Solo muestra cantidad de usuarios sin "en Xh" -->
+      <div class="stats-bar">
+        <div class="stats-left">
+          <div class="stat-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span class="count" id="total-count">0</span>
+            <span class="label">usuarios</span>
+          </div>
+          <div class="stat-badge active" id="active-badge" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <span class="count" id="active-count">0</span>
+            <span class="label">activos</span>
+          </div>
+        </div>
+        <div class="header-buttons">
+          <button class="btn-ghost" onclick="clearHistory()">Limpiar</button>
+          <button class="btn-ghost" onclick="reconnect()" id="reconnect-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+      <div class="state-container">
+        <div class="state-icon loading">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20h.01"/>
+            <path d="M7 20v-4"/>
+            <path d="M12 20v-8"/>
+            <path d="M17 20V8"/>
+            <path d="M22 4v16"/>
+          </svg>
+        </div>
+        <p class="state-title">Conectando a BrandMeister...</p>
+        <p class="state-subtitle">Escuchando el TG 73040</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-left">
+        <svg id="footer-status-icon" class="disconnected" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" x2="23" y1="1" y2="23"/>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <line x1="12" x2="12.01" y1="20" y2="20"/>
+        </svg>
+        <span id="last-update">Esperando conexion...</span>
+      </div>
+      <a href="https://brandmeister.network/?page=lh&DestinationID=73040" target="_blank" rel="noopener noreferrer" class="footer-link">
+        Ver en BrandMeister
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" x2="21" y1="14" y2="3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const TALKGROUP = 73040;
+    const STORAGE_KEY = 'bm_sessions_73040';
+    const HISTORY_HOURS = 5;
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const MAX_DISPLAY_USERS = 10;
+
+    // State
+    let sessions = [];
+    let socket = null;
+    let connected = false;
+    let sessionTimers = new Map();
+
+    // Icons SVG
+    const icons = {
+      wifi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 20 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>`,
+      wifiOff: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" x2="23" y1="1" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>`,
+      externalLink: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>`,
+      timer: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>`,
+      radio: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>`
+    };
+
+    // Load saved sessions from localStorage
+    function loadSessions() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const now = Date.now();
+          sessions = parsed.filter(s => now - (s.lastSeen * 1000) < ONE_HOUR_MS * HISTORY_HOURS);
+          renderSessions();
+        }
+      } catch (e) {
+        console.error('Error loading sessions:', e);
+      }
+    }
+
+    // Save sessions to localStorage
+    function saveSessions() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+      } catch (e) {
+        console.error('Error saving sessions:', e);
+      }
+    }
+
+    // Extract name from TalkerAlias
+    function extractName(talkerAlias, callsign) {
+      if (!talkerAlias) return '';
+      return talkerAlias.replace(callsign, '').trim();
+    }
+
+    // Format time ago
+    function formatTimeAgo(timestamp) {
+      const now = Math.floor(Date.now() / 1000);
+      const diff = now - timestamp;
+
+      if (diff < 0) return 'ahora';
+      if (diff < 60) return `${diff}s`;
+      if (diff < 3600) {
+        const mins = Math.floor(diff / 60);
+        const secs = diff % 60;
+        return `${mins}m ${secs}s`;
+      }
+      if (diff < 86400) {
+        const hours = Math.floor(diff / 3600);
+        const mins = Math.floor((diff % 3600) / 60);
+        return `${hours}h ${mins}m`;
+      }
+      return `${Math.floor(diff / 86400)}d`;
+    }
+
+    // Format time
+    function formatTime(timestamp) {
+      const date = new Date(timestamp * 1000);
+      return date.toLocaleTimeString('es-CL', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+
+    // Format duration
+    function formatDuration(seconds) {
+      if (!seconds || seconds < 1) return '-';
+      if (seconds < 60) return `${seconds}s`;
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Update connection status
+    function updateStatus(isConnected) {
+      connected = isConnected;
+      const badge = document.getElementById('status-badge');
+      const footerIcon = document.getElementById('footer-status-icon');
+
+      if (isConnected) {
+        badge.className = 'badge badge-live';
+        badge.innerHTML = `<span class="pulse-dot"></span> LIVE`;
+        footerIcon.className = 'connected';
+        footerIcon.innerHTML = icons.wifi;
+      } else {
+        badge.className = 'badge badge-offline';
+        badge.innerHTML = `${icons.wifiOff} OFFLINE`;
+        footerIcon.className = 'disconnected';
+        footerIcon.innerHTML = icons.wifiOff;
+      }
+    }
+
+    // Update last update time
+    function updateLastUpdateTime() {
+      const now = new Date();
+      document.getElementById('last-update').textContent = 
+        `Actualizado: ${now.toLocaleTimeString('es-CL')}`;
+    }
+
+    // Render sessions list
+    function renderSessions() {
+      const content = document.getElementById('content');
+      const now = Math.floor(Date.now() / 1000);
+
+      document.getElementById('total-count').textContent = sessions.length;
+      
+      const activeSessions = sessions.filter(s => now - s.lastSeen < 300);
+      const activeBadge = document.getElementById('active-badge');
+      if (activeSessions.length > 0) {
+        activeBadge.style.display = 'flex';
+        document.getElementById('active-count').textContent = activeSessions.length;
+      } else {
+        activeBadge.style.display = 'none';
+      }
+
+      if (sessions.length === 0) {
+        content.innerHTML = `
+          <div class="state-container">
+            <div class="state-icon empty">
+              ${icons.radio}
+            </div>
+            <p class="state-title">Esperando transmisiones...</p>
+            <p class="state-subtitle">Las transmisiones en el TG ${TALKGROUP} apareceran automaticamente cuando haya actividad.</p>
+            ${connected ? `
+              <div class="state-connected">
+                ${icons.wifi}
+                Conectado - escuchando en tiempo real
+              </div>
+            ` : ''}
+          </div>
+        `;
+        return;
+      }
+
+      const displaySessions = sessions.slice(0, MAX_DISPLAY_USERS);
+
+      let html = `
+        <div class="table-header">
+          <span>Indicativo</span>
+          <span>Nombre</span>
+          <span>ID DMR</span>
+          <span>Ultima TX</span>
+          <span>Duracion</span>
+        </div>
+        <div class="sessions-list">
+      `;
+
+      displaySessions.forEach((session, index) => {
+        const isRecent = now - session.lastSeen < 300;
+        const isNew = session.isNew;
+
+        html += `
+          <div class="session-row ${isRecent ? 'recent' : ''} ${isNew ? 'new' : ''}" id="session-${session.radioId}">
+            <div class="callsign-cell">
+              ${isRecent ? '<span class="live-indicator"></span>' : ''}
+              <a href="https://www.qrz.com/db/${session.callsign}" target="_blank" rel="noopener noreferrer" 
+                 class="callsign-link ${isRecent ? 'recent' : 'normal'}">
+                ${session.callsign}
+                ${icons.externalLink}
+              </a>
+            </div>
+            <span class="name-cell" title="${session.name || ''}">${session.name || '-'}</span>
+            <span class="dmr-id-cell">${session.radioId}</span>
+            <div class="time-cell">
+              <span class="time ${isRecent ? 'recent' : 'normal'}">${formatTime(session.lastSeen)}</span>
+              <span class="ago">${formatTimeAgo(session.lastSeen)}</span>
+            </div>
+            <div class="duration-cell">
+              ${icons.timer}
+              <span class="${session.duration > 0 ? 'has-duration' : 'no-duration'}">${formatDuration(session.duration)}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      content.innerHTML = html;
+
+      // Remove "new" flag after animation
+      sessions.forEach(s => s.isNew = false);
+    }
+
+    // Process incoming session data
+    function processSession(data) {
+      // Filter by talkgroup
+      if (data.DestinationID !== TALKGROUP) return;
+
+      const now = Math.floor(Date.now() / 1000);
+      const callsign = data.SourceCall || data.SourceCallsign || 'UNKNOWN';
+      const radioId = data.SourceID;
+      const talkerAlias = data.TalkerAlias || '';
+
+      // Calculate duration
+      let duration = 0;
+      const startTime = sessionTimers.get(radioId);
+      if (startTime) {
+        duration = now - startTime;
+      } else {
+        sessionTimers.set(radioId, now);
+      }
+
+      const session = {
+        callsign: callsign,
+        name: extractName(talkerAlias, callsign),
+        radioId: radioId,
+        slot: data.Slot || 0,
+        talkerAlias: talkerAlias,
+        lastSeen: now,
+        duration: duration,
+        isNew: true
+      };
+
+      // Update or add session
+      const existingIndex = sessions.findIndex(s => s.radioId === radioId);
+      
+      if (existingIndex >= 0) {
+        // Update existing - check if it's a continuation or new transmission
+        if (now - sessions[existingIndex].lastSeen < 120) {
+          // Same transmission, update duration
+          session.duration = now - (sessionTimers.get(radioId) || now);
+        } else {
+          // New transmission, reset timer
+          sessionTimers.set(radioId, now);
+          session.duration = 0;
+        }
+        sessions[existingIndex] = session;
+      } else {
+        // New session
+        sessionTimers.set(radioId, now);
+        sessions.unshift(session);
+      }
+
+      // Sort by last seen (most recent first)
+      sessions.sort((a, b) => b.lastSeen - a.lastSeen);
+
+      const cutoff = now - (ONE_HOUR_MS * HISTORY_HOURS / 1000);
+      sessions = sessions.filter(s => s.lastSeen > cutoff);
+
+      saveSessions();
+      renderSessions();
+      updateLastUpdateTime();
+    }
+
+    // Connect to BrandMeister Socket.IO
+    function connect() {
+      if (socket) {
+        socket.disconnect();
+      }
+
+      console.log('Connecting to BrandMeister...');
+      
+      socket = io('https://api.brandmeister.network', {
+        path: '/lh/socket.io',
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+        timeout: 20000
+      });
+
+      socket.on('connect', () => {
+        console.log('Connected to BrandMeister!');
+        updateStatus(true);
+        updateLastUpdateTime();
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Disconnected:', reason);
+        updateStatus(false);
+      });
+
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        updateStatus(false);
+      });
+
+      // Listen for MQTT messages (Last Heard data)
+      socket.on('mqtt', (data) => {
+        try {
+          const payload = typeof data.payload === 'string' ? JSON.parse(data.payload) : data.payload;
+          processSession(payload);
+        } catch (e) {
+          console.error('Error processing mqtt message:', e);
+        }
+      });
+    }
+
+    // Reconnect
+    function reconnect() {
+      const btn = document.getElementById('reconnect-btn');
+      const svg = btn.querySelector('svg');
+      svg.classList.add('spin');
+      
+      connect();
+      
+      setTimeout(() => {
+        svg.classList.remove('spin');
+      }, 2000);
+    }
+
+    // Clear history
+    function clearHistory() {
+      sessions = [];
+      sessionTimers.clear();
+      localStorage.removeItem(STORAGE_KEY);
+      renderSessions();
+    }
+
+    // Cleanup old sessions periodically
+    function cleanupOldSessions() {
+      const now = Date.now();
+      const cutoff = now - (ONE_HOUR_MS * HISTORY_HOURS);
+      sessions = sessions.filter(s => (s.lastSeen * 1000) > cutoff);
+      saveSessions();
+      renderSessions();
+    }
+
+    // Update times every second
+    function updateTimes() {
+      const timeElements = document.querySelectorAll('.time-cell .ago');
+      const displaySessions = sessions.slice(0, MAX_DISPLAY_USERS);
+      displaySessions.forEach((session, index) => {
+        if (timeElements[index]) {
+          timeElements[index].textContent = formatTimeAgo(session.lastSeen);
+        }
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSessions();
+      connect();
+      
+      // Cleanup every minute
+      setInterval(cleanupOldSessions, 60000);
+      
+      // Update times every second
+      setInterval(updateTimes, 1000);
+    });
+  </script>
+</body>
+</html>

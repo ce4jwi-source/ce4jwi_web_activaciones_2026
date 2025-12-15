@@ -1,0 +1,115 @@
+/* ===== HEADER RESPONSIVE STYLES ===== */
+
+/* Botón hamburguesa - oculto en desktop */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animación hamburguesa a X */
+.menu-toggle.active .hamburger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .hamburger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablets y móviles */
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 80px 20px 20px;
+    gap: 0;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  .nav.nav-open {
+    right: 0;
+  }
+
+  .nav .nav-link {
+    padding: 15px 20px;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+  }
+
+  .nav .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav .nav-link:hover,
+  .nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+
+  /* Overlay cuando el menú está abierto */
+  .nav.nav-open::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0 15px;
+  }
+
+  .logo span {
+    font-size: 1.2rem;
+  }
+
+  .nav {
+    width: 100%;
+    right: -100%;
+  }
+}

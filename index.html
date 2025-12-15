@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CE4JWI - Actividades de Radioaficionados de Chile</title>
+  <meta name="description" content="Portal de actividades de radioaficionados CE4JWI Chile">
+  <link rel="stylesheet" href="recursos/styles.css">
+  <link rel="stylesheet" href="recursos/header-responsive.css">
+  <!-- Agregando CSS del slider -->
+  <link rel="stylesheet" href="recursos/slider.css">
+  <link rel="icon" href="public/favicon-32x32.png">
+</head>
+<body>
+  <!-- Contenedores para componentes dinámicos -->
+  <div id="header-container"></div>
+  <div id="marquee-container"></div>
+
+  <!-- Main Content -->
+  <main class="main-container">
+    <div class="content">
+      <!-- Banner -->
+      <div class="banner">
+        <h1>Actividades de Radioaficionados</h1>
+      </div>
+
+      <!-- Activity Grid -->
+      <div class="activity-grid" id="activityGrid">
+        <!-- Cards will be inserted by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+  </main>
+
+  <!-- Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Mover componentes.js al final para asegurar que el DOM esté listo -->
+  <script src="recursos/componentes.js"></script>
+  <script src="recursos/script.js"></script>
+</body>
+</html>
