@@ -59,7 +59,7 @@ const COMPONENTES = {
       <span class="marquee-separator">★</span>
       <span class="marquee-item">
         <span class="marquee-badge new">NUEVO</span>
-        Solo se Activará  en <b>DMR TG 73040 </b> y en <b>Peanut</b> Sala <b>"ACTIVA2"</b>
+        Actividad especial por el <b>Año Nuevo 2026 - 31 de Diciembre 2025</b>
       </span>
       <span class="marquee-separator">★</span>
       <span class="marquee-item">
