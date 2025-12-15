@@ -472,6 +472,16 @@ const activities = [
     date: "18 Diciembre 2025",
     url: "fundacion_cruz_roja_chilena_1903.html",
   },
+  {
+    id: 50,
+    title: "Navidad 2025",
+    image: "public/NAVIDAD2025.jpg",
+    status: "PRÓXIMAMENTE",
+    description:
+      "A partir de la Guerra del Pacífico, surgen distintas iniciativas para gestionar la asistencia social y brindar ayuda a los más desvalidos. La...",
+    date: "24 Diciembre 2025",
+    url: "dia_de_la_madre_2025.html",
+  },
   
 
 ]
