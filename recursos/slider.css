@@ -48,7 +48,7 @@
   transform: translateY(-50%);
   background: rgba(0, 0, 0, 0);
   border: none;
-  color: white;
+  color: rgba(255, 255, 255, 0.014);
   width: 36px;
   height: 36px;
   border-radius: 50%;

@@ -845,8 +845,8 @@ ol{
   height: 48px;
   border-radius: 50%;
   border: none;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #171717;
+  background-color: rgba(255, 255, 255, 0);
+  color: #fffefe;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -856,7 +856,7 @@ ol{
 }
 
 .carousel-btn:hover {
-  background-color: #ffffff;
+  background-color: #ffffff00;
   transform: translateY(-50%) scale(1.05);
 }
 
