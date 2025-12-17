@@ -198,9 +198,9 @@ const COMPONENTES = {
       <h3>Monitoreo tg 73040 BM</h3>
     </div>
     <div class="widget-content">
-      <a href="widget-brandmeister-sidebar.html">
+      
       <iframe src="widget-brandmeister-sidebar.html" width="100%" height="300px" allow="fullscreen"></iframe>
-      </a>
+      
     </div>
   </div>
   
