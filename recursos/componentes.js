@@ -131,7 +131,7 @@ const COMPONENTES = {
     </div>
     <div class="widget-content">
       <form id="topcall" action="https://www.qrz.com/lookup" method="post" target="_new">
-        <input autocomplete="off" id="tquery" name="tquery" type="text" maxlength="60" value="" />
+        <input autocomplete="off" id="tquery" name="tquery" type="text" maxlength="60" value="" placeholder="Ingresa Indicativo"/>
         <input id="mode" name="mode" type="hidden" maxlength="60" value="callsign" />
         <input id="tsubmit" type="submit" value="Buscar" />
       </form>
