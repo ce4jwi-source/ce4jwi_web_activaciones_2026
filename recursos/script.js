@@ -446,7 +446,7 @@ const activities = [
     id: 47,
     title: "Dia Nacional contra el femicidio",
     image: "public/femicidio2025.png",
-    status: "PRÓXIMAMENTE",
+    status: "EN CURSO",
     description:
       "Alcanzar una mayor visibilización de la situación de violencia que afecta a las mujeres, es uno de los principales objetivos del proyecto de...",
     date: "19 Diciembre 2025",
@@ -466,7 +466,7 @@ const activities = [
     id: 49,
     title: "Fundación Cruz Roja Chilena (1903)",
     image: "public/cruzrojachilena_2025.jpg",
-    status: "EN CURSO",
+    status: "FINALIZADO",
     description:
       "A partir de la Guerra del Pacífico, surgen distintas iniciativas para gestionar la asistencia social y brindar ayuda a los más desvalidos. La...",
     date: "18 Diciembre 2025",
