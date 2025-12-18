@@ -344,7 +344,10 @@ body {
   background-color: #1F618D;
   color: white;
 }
-
+.card-status.now {
+  background-color: #196F3D;
+  color: white;
+}
 .card-status.finished {
   background-color: #C0392B;
   color: white;

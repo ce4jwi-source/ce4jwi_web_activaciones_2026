@@ -466,7 +466,7 @@ const activities = [
     id: 49,
     title: "Fundación Cruz Roja Chilena (1903)",
     image: "public/cruzrojachilena_2025.jpg",
-    status: "PRÓXIMAMENTE",
+    status: "EN CURSO",
     description:
       "A partir de la Guerra del Pacífico, surgen distintas iniciativas para gestionar la asistencia social y brindar ayuda a los más desvalidos. La...",
     date: "18 Diciembre 2025",
@@ -534,7 +534,7 @@ function renderActivities() {
     card.rel = "noopener noreferrer"
     card.className = "activity-card"
 
-    const statusClass = activity.status === "PRÓXIMAMENTE" ? "upcoming" : "finished"
+    const statusClass = activity.status === "PRÓXIMAMENTE" ? "upcoming" : activity.status === "EN CURSO" ? "now" : "finished"
 
     card.innerHTML = `
       <div class="card-image-container">
