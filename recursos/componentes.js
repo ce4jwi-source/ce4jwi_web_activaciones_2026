@@ -46,11 +46,11 @@ const COMPONENTES = {
         <span class="marquee-badge new">NUEVO</span>
         Actividad especial por el Día Nacional Contra el Femicidio - 19 de Diciembre 2025
       </span>
-     <!-- <span class="marquee-separator">★</span>
+     <span class="marquee-separator">★</span>
       <span class="marquee-item">
         <span class="marquee-badge hot">ACTIVO</span>
         Estación CE4JWI operando en el <b>TG 73040 - Modo DMR</b>
-      </span>-->
+      </span>
       
       <span class="marquee-separator">★</span>
       <span class="marquee-item">
