@@ -472,7 +472,7 @@ const activities = [
     date: "18 Diciembre 2025",
     url: "fundacion_cruz_roja_chilena_1903.html",
   },
-  {
+  /*{
     id: 50,
     title: "Navidad 2025",
     image: "public/NAVIDAD2025.jpg",
@@ -492,7 +492,7 @@ const activities = [
     date: "31 Diciembre 2025",
     url: "bienvenido_2026.html",
   },
-
+*/
 ]
 
 function parseSpanishDate(dateStr) {
