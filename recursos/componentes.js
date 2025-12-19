@@ -90,9 +90,7 @@ const COMPONENTES = {
             <div class="slide">
               <img src="public/peanut.png" alt="">
             </div>
-          <div class="slide">
-              <img src="public/HF.png" alt="">
-            </div> 
+            
           </div>
           <button class="slider-btn prev" id="sliderPrev" aria-label="Imagen anterior">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
