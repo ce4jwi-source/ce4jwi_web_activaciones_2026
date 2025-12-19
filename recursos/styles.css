@@ -478,7 +478,10 @@ body {
 }
 
 .status-dot.online {
-  background-color: #22c55e;
+  background-color: #05702d;
+}
+.status-dot.offline {
+  background-color: #f50000;
 }
 
 @keyframes pulse {
@@ -494,7 +497,7 @@ body {
 .status-text {
   font-size: 1.5rem;
   font-weight: 500;
-  color: #16a34a;
+  color: #5a5353da;
 }
 
 .station-info {
@@ -510,22 +513,7 @@ body {
   font-weight: 500;
 }
 
-/* UTC Clock */
-.utc-clock {
-  text-align: center;
-}
 
-.utc-time {
-  font-size: 1.5rem;
-  font-family: "Courier New", monospace;
-  font-weight: bold;
-  color: #1f2937;
-}
-
-.utc-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
 
 /* Stats Grid */
 .stats-grid {
