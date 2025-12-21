@@ -198,6 +198,17 @@ const COMPONENTES = {
     </div>
   </div>
   
+  <!-- Widget: log qrz.com -->
+  <div class="widget">
+    <div class="widget-header">
+      <img src="public/binocular.png" alt="" width="28" height="28">
+      <h3>Log QRZ.com CE4JWI</h3>
+    </div>
+    <div class="widget-content">
+     <iframe align="top" frameborder="0" height="500" scrolling="auto" src="https://logbook.qrz.com/lbstat/CE4JWI/" width="290"></iframe>
+    </div>
+  </div>  
+
 
   <!-- Widget: Visitas en la Web! -->
   <div class="widget">
@@ -244,7 +255,7 @@ const COMPONENTES = {
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
             <polyline points="22,6 12,13 2,6"/>
           </svg>
-          <a href="mailto:ce4jwi@qsl.net">CE4JWI@gmail.com</a>
+          <a href="mailto:ce4jwi@qsl.net" style="color:white;">CE4JWI@gmail.com</a>
         </li>
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
