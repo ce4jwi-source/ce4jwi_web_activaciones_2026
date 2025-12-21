@@ -145,8 +145,8 @@ const COMPONENTES = {
     </div>
     <div class="widget-content">
       <div class="status-indicator">
-        <span class="status-dot offline"></span>
-        <span class="status-text">DESCONECTADO</span>
+        <span class="status-dot online"></span>
+        <span class="status-text">CONECTADO</span>
       </div>
       <div class="station-info">
         <p><span class="label">Frecuencia:</span> <b>433.700 MHz</b></p>
