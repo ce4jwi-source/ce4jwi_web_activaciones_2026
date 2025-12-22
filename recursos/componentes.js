@@ -205,7 +205,7 @@ const COMPONENTES = {
       <h3>Log QRZ.com CE4JWI</h3>
     </div>
     <div class="widget-content">
-     <iframe align="top" frameborder="0" height="500" scrolling="auto" src="https://logbook.qrz.com/lbstat/CE4JWI/" width="290"></iframe>
+     <iframe align="top" frameborder="0" height="520" scrolling="no" src="https://logbook.qrz.com/lbstat/CE4JWI/" width="290"></iframe>
     </div>
   </div>  
 
