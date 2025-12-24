@@ -1,0 +1,9 @@
+{
+    "_readMe": "Review list of sync operations, then use Ftp-sync: Commit command to accept changes. Note that if you're not in your root directory then all the parent directories will also be uploaded",
+    "_warning": "This file should not be saved, reopened review file won't work!",
+    "filesToUpdate": [],
+    "filesToAdd": [],
+    "dirsToAdd": [],
+    "filesToRemove": [],
+    "dirsToRemove": []
+}

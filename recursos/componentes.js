@@ -198,18 +198,7 @@ const COMPONENTES = {
     </div>
   </div>
   
-  <!-- Widget: log qrz.com -->
-  <div class="widget">
-    <div class="widget-header">
-      <img src="public/binocular.png" alt="" width="28" height="28">
-      <h3>Log QRZ.com CE4JWI</h3>
-    </div>
-    <div class="widget-content">
-     <iframe align="top" frameborder="0" height="520" scrolling="no" src="https://logbook.qrz.com/lbstat/CE4JWI/" width="290"></iframe>
-    </div>
-  </div>  
-
-
+  
   <!-- Widget: Visitas en la Web! -->
   <div class="widget">
     <div class="widget-header">
