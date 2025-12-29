@@ -42,10 +42,10 @@ const COMPONENTES = {
   </div>
   <div class="marquee-wrapper">
     <div class="marquee-content" id="marqueeContent">
-      <span class="marquee-item">
+      <!--<span class="marquee-item">
         <span class="marquee-badge new">NUEVO</span>
         Actividad Navidad 2025 - 24 de Diciembre 2025
-      </span>
+      </span> -->
      <span class="marquee-separator">★</span>
       <span class="marquee-item">
         <span class="marquee-badge hot">ACTIVO</span>

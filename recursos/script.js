@@ -494,6 +494,18 @@ const activities = [
     url: "bienvenido_2026.html",
   }
     ,
+  {
+    id: 52,
+    title: "Día del roto chileno",
+    image: "public/ROTO CHILENO.jpg",
+    status: "PRÓXIMAMENTE",
+    description:
+      "Instaurado en 1889, recuerda el triunfo de las tropas restauradoras, mayoritariamente chilenas y pertenecientes a grupos de extracción pobre contra el ejército de...",
+    date: "20 Enero 2026",
+    url: "dia_del_roto_chileno_2026.html",
+  }
+    ,
+  
 
 ]
 
